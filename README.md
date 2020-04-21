@@ -1,6 +1,6 @@
 # Perguntas
 
-A new Flutter project.
+Primeiro projeto com flutter.
 
 ## Descrição
 
