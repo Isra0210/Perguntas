@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import './questao.dart';
+import './resultado.dart';
+import './questionario.dart';
 
 main() => runApp(PerguntaApp());
 
@@ -10,24 +11,55 @@ main() => runApp(PerguntaApp());
 class _PerguntaAppState extends State<PerguntaApp> {
   //gerenciando a classe Pergunta app
   var _perguntaSelecionada = 0;
+  var _pontuacaoTotal = 0;
 
-  void _responder() {
-    int i = 0;
+  final _perguntas = const [ //Todo "_" antes de qualquer atributo ou método torna ele privado
+    //Lista de _Perguntas
+    {
+      'texto': 'Qual é sua cor favorita?',
+      'respostas': [
+        {'texto': 'Azul', 'pontuacao': 10}, 
+        {'texto': 'Preto', 'pontuacao': 8}, 
+        {'texto': 'Branco', 'pontuacao': 5}, 
+        {'texto': 'Vermelho', 'pontuacao': 2}, 
+      ],
+    },
+    {
+      'texto': 'Qual é seu animal favorito?',
+      'respostas': [
+        {'texto': 'Cachorro', 'pontuacao': 10},
+        {'texto': 'Gato', 'pontuacao': 8},
+        {'texto': 'Elefante', 'pontuacao': 5},
+        {'texto': 'Girafa', 'pontuacao': 2},
+      ],
+    },
+    {
+      'texto': 'Qual é seu time favorito?',
+      'respostas': [
+        {'texto': 'Corinthans', 'pontuacao': 8},
+        {'texto': 'São Paulo', 'pontuacao': 2},
+        {'texto': 'Grêmio', 'pontuacao': 5},
+        {'texto': 'Atlético Paranaense', 'pontuacao': 10},
+        ],
+    },
+  ];
+  
+  bool get temPerguntaSelecionada{
+    //o indice tem que ser menor que o número de objetos dentro
+    return _perguntaSelecionada < _perguntas.length;
+  }
 
-    setState(() {
-      _perguntaSelecionada++;
-    });
-    print(_perguntaSelecionada);
+  void _responder(int pontuacao) {
+    if(temPerguntaSelecionada){ 
+      setState(() {
+        _perguntaSelecionada++;
+        _pontuacaoTotal += pontuacao;
+      });
+    }
+    print(_pontuacaoTotal);
   }
 
   @override
-  final perguntas = [
-    'Qual é sua cor favorita?',
-    'Qual é seu animal favorito?',
-    'Qual é seu time favorito?',
-    'Qual é sua música Favorita',
-  ];
-
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
@@ -36,32 +68,13 @@ class _PerguntaAppState extends State<PerguntaApp> {
           backgroundColor: Color.fromRGBO(128, 0, 128, 1),
         ),
         backgroundColor: Color.fromRGBO(255, 255, 255, 1),
-        body: Column(
-          children: <Widget>[
-            Questao(perguntas[_perguntaSelecionada]),
-            //Passando a pergunta como parametro do construtor na classe questao
-            Container(
-              width: double.infinity,
-              margin: EdgeInsets.fromLTRB(25, 0, 5, 15),
-              child: Row(
-                children: <Widget>[
-                  RaisedButton(
-                    child: Text('Resposta 1'),
-                    onPressed: _responder,
-                  ),
-                  RaisedButton(
-                    child: Text('Resposta 2'),
-                    onPressed: _responder,
-                  ),
-                  RaisedButton(
-                    child: Text('Resposta 3'),
-                    onPressed: _responder,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+        body: temPerguntaSelecionada ?  
+          Questionario(
+            perguntas: _perguntas,
+            perguntaSelecionada: _perguntaSelecionada,
+            responder: _responder,
+          )
+          : Resultado(_pontuacaoTotal),
       ),
     );
   }
